@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="__CSRF_TOKEN__">
+  <meta name="color-scheme" content="light">
+  <title>X 视频下载器</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="X 视频下载器首页">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9 5 11 7-11 7V5Z"/></svg></span>
+        <span>X 视频下载器</span>
+      </a>
+      <span class="local-badge"><span aria-hidden="true"></span>本机运行</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="page-title">
+        <h1 id="page-title">粘贴链接，下载视频。</h1>
+        <p class="intro-copy">自动选择最高可用清晰度，保存 MP4 到你的 Mac。</p>
+      </section>
+
+      <section class="download-card" aria-label="视频下载">
+        <form id="inspect-form" novalidate>
+          <label class="input-label" for="tweet-url">公开 X 推文链接</label>
+          <div class="url-row">
+            <input id="tweet-url" name="url" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://x.com/用户名/status/…" aria-describedby="url-help" required>
+            <button id="inspect-button" class="button primary" type="submit" disabled>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>
+              <span id="inspect-label">下载视频</span>
+            </button>
+          </div>
+          <p id="url-help" class="field-help">支持 x.com 与 twitter.com 的公开推文。</p>
+          <label class="choice-option" for="manual-choice"><input id="manual-choice" type="checkbox"><span>下载前选择视频与清晰度</span></label>
+        </form>
+
+        <div id="notice" class="notice" role="alert" hidden></div>
+
+        <section id="selection-panel" class="selection-panel" aria-labelledby="selection-title" hidden>
+          <h2 id="selection-title">选择视频与清晰度</h2>
+          <p id="tweet-title" class="tweet-title"></p>
+          <div class="select-grid">
+            <div class="field-group"><label for="video-select">视频</label><select id="video-select"></select></div>
+            <div class="field-group"><label for="quality-select">清晰度</label><select id="quality-select"></select></div>
+          </div>
+          <div id="format-details" class="format-details"></div>
+          <div class="download-row"><button id="download-button" class="button primary" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg><span>下载 MP4</span></button></div>
+        </section>
+
+        <section id="job-panel" class="job-panel" aria-labelledby="job-title" hidden>
+          <div class="job-topline"><h2 id="job-title">正在检测视频</h2><button id="cancel-button" class="text-button" type="button">取消</button></div>
+          <div id="progress-track" class="progress-track indeterminate" role="progressbar" aria-label="任务进度" aria-valuemin="0" aria-valuemax="100"><div id="progress-fill"></div></div>
+          <div class="progress-line"><p id="job-message" role="status">正在连接 X…</p><span id="progress-percent"></span></div>
+          <p id="progress-meta" class="progress-meta"></p>
+        </section>
+
+        <section id="complete-panel" class="complete-panel" aria-labelledby="complete-title" role="status" hidden>
+          <div class="success-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m5 12 4 4 10-10"/></svg></div>
+          <div class="complete-content"><h2 id="complete-title">视频已保存</h2><p id="complete-filename"></p><p id="complete-size" class="complete-size"></p></div>
+          <div class="complete-actions"><button id="reveal-button" class="button secondary" type="button">在 Finder 中显示</button><a id="save-copy" class="text-link" href="#" download>另存一份</a></div>
+        </section>
+
+        <div id="empty-state" class="empty-state"><p>需要时自动合并为 MP4。下载期间请保持工具运行。</p></div>
+        <p class="save-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h7l2 2h9v12H3V6Z"/></svg><span>保存到 <strong id="save-folder">下载 / X-Video-Lab</strong></span></p>
+      </section>
+
+      <p class="permissions-note">仅保存你有权下载的公开内容，请遵守版权和 X 平台规则。不支持需要登录、私人或 DRM 保护的内容。</p>
+      <details class="learn-details">
+        <summary>下载方式说明<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></summary>
+        <p>本工具用 yt-dlp 获取公开视频。直接 MP4 可保存为完整文件；HLS（M3U8）会获取视频片段，再由 FFmpeg 合并。合并时可能暂时没有百分比。X 调整接口后，可能需要更新下载工具。</p>
+      </details>
+      <section class="environment-bar" aria-label="本机环境">
+        <div id="environment-state" class="environment-state" role="status"><span class="status-dot"></span><span id="environment-message">正在检查本机环境…</span></div>
+        <span id="environment-versions" class="environment-versions"></span>
+        <button id="retry-button" class="text-button" type="button" hidden>重新检查</button>
+      </section>
+    </main>
+
+    <footer><span>下载与处理均在本机完成</span><button id="shutdown-button" class="text-button" type="button">退出下载器</button></footer>
+  </div>
+  <noscript><p class="noscript">请在 Safari 设置中启用 JavaScript，以使用本机视频下载工具。</p></noscript>
+</body>
+</html>
