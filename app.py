@@ -64,14 +64,19 @@ def friendly_error(exc):
         code, message = "login", "平台要求登录。工具不读取浏览器登录信息，请使用无需登录的公开推文。"
     elif any(s in text for s in ("429", "rate-limit", "rate limit", "too many requests")):
         code, message = "rate_limit", "X 暂时限制了请求，请稍后重试。"
+    elif any(s in text for s in ("unable to connect to proxy", "proxyerror", "tunnel connection failed",
+                                 "503 service unavailable", "http error 503", "http error 502",
+                                 "http error 504", "bad gateway", "gateway timeout")):
+        code, message = "network", "网络或代理服务暂时不可用，请恢复连接后重试。"
     elif any(s in text for s in ("ffmpeg", "ffprobe")):
-        code, message = "ffmpeg", "FFmpeg 处理失败或未安装。请运行 install.command 后重试。"
+        hint = "请重新安装下载器。" if getattr(sys, "frozen", False) else "请运行 install.command 后重试。"
+        code, message = "ffmpeg", "FFmpeg 处理失败或未安装。" + hint
     elif any(s in text for s in ("not found", "404", "deleted", "does not exist", "unavailable")):
         code, message = "unavailable", "推文已删除、不可用，或当前地区无法访问。请在 Safari 中核对原链接。"
     elif any(s in text for s in ("no video", "no media", "does not contain a video", "no formats")):
         code, message = "no_video", "这条推文没有可下载的视频。"
     elif any(s in text for s in ("certificate", "ssl")):
-        code, message = "network", "安全连接验证失败。请检查系统时间、网络证书，并运行 update.command 更新依赖。"
+        code, message = "network", "安全连接验证失败。请检查系统时间和网络连接，并更新下载器后重试。"
     elif any(s in text for s in ("timeout", "timed out", "connection", "resolve", "network", "urlopen", "incompleteread", "bytes read")):
         code, message = "network", "网络连接失败或超时。请确认这台 Mac 能访问 X 和视频服务器后重试。"
     elif any(s in text for s in ("permission denied", "read-only", "no space")):
@@ -590,7 +595,8 @@ def main():
     try:
         import yt_dlp  # noqa: F401
         if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
-            raise UserError("ffmpeg", "请先双击 install.command 安装 FFmpeg。")
+            raise UserError("ffmpeg", "下载组件缺失，请重新安装下载器。" if getattr(sys, "frozen", False)
+                            else "请先双击 install.command 安装 FFmpeg。")
         state = AppState(args.download_dir)
         server = LocalServer(("127.0.0.1", args.port), state)
     except Exception as exc:

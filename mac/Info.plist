@@ -6,6 +6,7 @@
     <key>CFBundleIdentifier</key><string>local.xvideolab.downloader</string>
     <key>CFBundleName</key><string>X视频下载器</string>
     <key>CFBundleDisplayName</key><string>X视频下载器</string>
+    <key>CFBundleIconFile</key><string>AppIcon</string>
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleShortVersionString</key><string>1.0</string>
     <key>CFBundleVersion</key><string>1</string>
@@ -13,7 +14,9 @@
     <key>NSHighResolutionCapable</key><true/>
     <key>XVLProjectFolder</key><string>下载器</string>
     <key>NSDesktopFolderUsageDescription</key>
-    <string>读取同目录的下载器源码，并将视频保存到本文件夹的「视频」。</string>
+    <string>将下载的视频保存到你选定的桌面文件夹。</string>
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>将下载的视频保存到「下载/X视频下载器」。</string>
     <key>NSAppTransportSecurity</key>
     <dict><key>NSAllowsLocalNetworking</key><true/></dict>
 </dict>

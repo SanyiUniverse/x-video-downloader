@@ -1,0 +1,44 @@
+FFmpeg 9.0.2
+Source: https://ffmpeg.org/releases/ffmpeg-9.0.2.tar.xz
+SHA-256: 8c3850283eb25fa026482078a04051e0be17347b09ef81a0849bec15a96e002e
+Configuration:
+  --arch=arm64
+  --target-os=darwin
+  --cc=/usr/bin/clang
+  --enable-static
+  --disable-shared
+  --disable-autodetect
+  --disable-gpl
+  --disable-nonfree
+  --disable-version3
+  --enable-small
+  --disable-doc
+  --disable-debug
+  --disable-checkasm
+  --disable-network
+  --disable-avdevice
+  --disable-everything
+  --disable-programs
+  --enable-ffmpeg
+  --enable-ffprobe
+  --enable-demuxer=mov,mpegts,aac,concat
+  --enable-muxer=mp4,mov,ipod
+  --enable-parser=h264,aac
+  --enable-decoder=h264,aac
+  --enable-bsf=aac_adtstoasc,h264_mp4toannexb
+  --enable-protocol=file,pipe
+  --extra-cflags=-mmacosx-version-min=12.0
+  --extra-ldflags=-mmacosx-version-min=12.0
+
+License: LGPL version 2.1 or later (GPL, version3 and nonfree disabled).
+The official source archive is unmodified. Release source: ffmpeg-9.0.2.tar.xz.
+Reproduce on an Apple Silicon Mac with Xcode Command Line Tools:
+  scripts/build-bundled-ffmpeg.sh /absolute/path/to/build-directory
+The script verifies the archive SHA-256 before building.
+The binaries statically link FFmpeg libraries and dynamically link only Apple
+system libraries; they do not require Homebrew or a separately installed FFmpeg.
+Stream copy is supported; media downloading is handled by yt-dlp.
+Build compiler: Apple clang 21.0.0; target arm64, macOS minimum 12.0.
+Dynamic libraries: libSystem, CoreFoundation, CoreVideo, CoreMedia.
+Verified: existing 4:22:29 H.264/AAC MP4 metadata, 5-second stream-copy MP4,
+synthetic local HLS -> MP4, and separate H.264/AAC tracks -> MP4.
